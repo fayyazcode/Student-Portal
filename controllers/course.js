@@ -6,6 +6,7 @@ const { uploadMultipleToCloudinary } = require("../utils/cloudinary");
 const CourseCategory = require("../models/courseCategoryModel");
 const Enrollment = require("../models/enrollment");
 const Student = require("../models/studentModel");
+const { Sequelize } = require("sequelize");
 
 const includeObj = {
     include: [
@@ -46,8 +47,27 @@ const createCourse = async (req, res) => {
 
 const getAllCourses = async (req, res) => {
     const courses = await Course.findAll({
-        ...includeObj
+        attributes: {
+            include: [
+                [
+                    Sequelize.cast(Sequelize.fn("COUNT", Sequelize.col("enrollments.id")), 'INTEGER'),
+                    "totalEnrollments"
+                ]
+            ]
+        },
+        include: [
+            {
+                model: Enrollment,
+                as: "enrollments",
+                attributes: [] // Avoid fetching individual enrollment records
+            },
+            { model: CourseImage, as: "images", attributes: { exclude: ["courseId"] } },
+            { model: CourseCategory, as: "category" }
+        ],
+        group: ['Course.id', 'images.id', 'category.id'], // Add images and category fields to the group clause
     });
+
+
 
     return res.status(200).send(resWrapper("Courses Reterived", 200, courses))
 
@@ -59,8 +79,26 @@ const getACourse = async (req, res) => {
 
 
     const course = await Course.findByPk(id, {
-        ...includeObj
+        attributes: {
+            include: [
+                [
+                    Sequelize.cast(Sequelize.fn("COUNT", Sequelize.col("enrollments.id")), 'INTEGER'),
+                    "totalEnrollments"
+                ]
+            ]
+        },
+        include: [
+            {
+                model: Enrollment,
+                as: "enrollments",
+                attributes: [] // Avoid fetching individual enrollment records
+            },
+            { model: CourseImage, as: "images", attributes: { exclude: ["courseId"] } },
+            { model: CourseCategory, as: "category" }
+        ],
+        group: ['Course.id', 'images.id', 'category.id'], // Add images and category fields to the group clause
     });
+
 
     if (!course) return res.status(404).send(resWrapper("Course Not Found", 404, null, "Id is not valid"))
 
