@@ -1,7 +1,28 @@
 const { resWrapper, isValidUuid } = require("../utils");
 const Student = require("../models/studentModel");
+const Enrollment = require("../models/enrollment");
+
 const { validateCreateStudent } = require("../joischemas/student");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
+
+const includeObj = {
+    attributes: {
+        include: [
+            [
+                Sequelize.cast(Sequelize.fn("COUNT", Sequelize.col("enrollments.id")), 'INTEGER'),
+                "totalEnrollments"
+            ]
+        ]
+    },
+    include: [
+        {
+            model: Enrollment,
+            as: "enrollments",
+            attributes: [] // Avoid fetching individual enrollment records
+        },
+    ],
+    group: ['Student.id'],
+}
 
 const calculateAge = (dob) => {
     const today = new Date();
@@ -34,6 +55,8 @@ const createStudent = async (req, res) => {
     return res.status(201).send(resWrapper("Enrollment created", 201, student));
 }
 
+
+
 const getAllStudents = async (req, res) => {
     let students;
     const query = req.query;
@@ -48,9 +71,16 @@ const getAllStudents = async (req, res) => {
                 };
             }
         });
-        students = await Student.findAll({ where });
+
+
+        students = await Student.findAll({
+            where,
+            ...includeObj
+        });
     } else {
-        students = await Student.findAll()
+        students = await Student.findAll({
+            ...includeObj
+        })
     }
 
 
@@ -62,7 +92,7 @@ const getAStudent = async (req, res) => {
     if (!isValidUuid(id, res)) return;
 
 
-    const student = await Student.findOne({ where: { id } });
+    const student = await Student.findOne({ where: { id }, ...includeObj });
     if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Id Is Not Valid"));
 
     return res.status(200).send(resWrapper("Student Reterived", 200, student));
