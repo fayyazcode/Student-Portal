@@ -1,4 +1,4 @@
-const { resWrapper } = require("../utils");
+const { resWrapper, isValidUuid } = require("../utils");
 const Student = require("../models/studentModel");
 const { validateCreateStudent } = require("../joischemas/student");
 const { Op } = require("sequelize");

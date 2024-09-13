@@ -1,6 +1,6 @@
 const Enrollment = require("../models/enrollment");
 const Student = require("../models/studentModel");
-const { resWrapper } = require("../utils");
+const { resWrapper, isValidUuid } = require("../utils");
 
 const { validateCreateEnrollment } = require("../joischemas/enrollment");
 const Course = require("../models/courseModel");
