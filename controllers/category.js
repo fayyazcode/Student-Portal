@@ -22,14 +22,15 @@ const createCategory = async (req, res) => {
 
 }
 
-// const getAllCourses = async (req, res) => {
-//     const courses = await Course.findAll({
-//         ...includeObj
-//     });
 
-//     return res.status(200).send(resWrapper("Courses Reterived", 200, courses))
+const getAllCategories = async (req, res) => {
+    const categories = await CourseCategory.findAll({
+        // ...includeObj
+    });
 
-// }
+    return res.status(200).send(resWrapper("Categories Reterived", 200, categories))
+
+}
 
 // const getACourse = async (req, res) => {
 //     const id = req.params.id;
@@ -44,4 +45,4 @@ const createCategory = async (req, res) => {
 
 // }
 
-module.exports = { createCategory }
+module.exports = { createCategory, getAllCategories }

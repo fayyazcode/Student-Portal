@@ -3,10 +3,9 @@ const { DataTypes } = require("sequelize")
 
 const Student = sequelize.define("Student", {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        allowNull: false,
-        autoIncrement: true
+        defaultValue: DataTypes.UUIDV4
     },
     firstName: {
         type: DataTypes.STRING,

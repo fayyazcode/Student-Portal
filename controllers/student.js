@@ -59,6 +59,8 @@ const getAllStudents = async (req, res) => {
 
 const getAStudent = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const student = await Student.findOne({ where: { id } });
     if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Id Is Not Valid"));
@@ -68,6 +70,8 @@ const getAStudent = async (req, res) => {
 
 const deleteAStudent = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
     const student = await Student.findOne({ where: { id } });
     if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Id Is Not Valid"));
 

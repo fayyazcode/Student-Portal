@@ -4,10 +4,9 @@ const CourseCategory = require("./courseCategoryModel");
 
 const Course = sequelize.define('Course', {
     id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true
+        defaultValue: DataTypes.UUIDV4
     },
     title: {
         type: DataTypes.STRING,
@@ -23,7 +22,7 @@ const Course = sequelize.define('Course', {
         defaultValue: 'Published',
     },
     categoryId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: CourseCategory,

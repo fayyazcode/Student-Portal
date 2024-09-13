@@ -23,6 +23,9 @@ const createEnrollment = async (req, res) => {
     const { error, value: { studentId, courseId } } = validateCreateEnrollment(req.body)
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));
 
+    if (!isValidUuid(studentId, res)) return;
+    if (!isValidUuid(courseId, res)) return;
+
     const student = await Student.findByPk(studentId);
     if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Student Id Is Not Valid"));
 
@@ -52,6 +55,8 @@ const getAllEnrollments = async (req, res) => {
 
 const getAEnrollment = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const enrollment = await Enrollment.findByPk(id, {
         ...includeObj
@@ -63,6 +68,8 @@ const getAEnrollment = async (req, res) => {
 
 const deleteAEnrollment = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const enrollment = await Enrollment.findByPk(id, {
         ...includeObj

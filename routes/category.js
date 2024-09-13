@@ -1,10 +1,10 @@
 const express = require("express");
-const { createCategory } = require("../controllers/category");
+const { createCategory, getAllCategories } = require("../controllers/category");
 // const { createCourse, getAllCourses, getACourse } = require("../controllers/course")
 const categoryRouter = express.Router();
 
 
-categoryRouter.get("/",);
+categoryRouter.get("/", getAllCategories);
 categoryRouter.get("/:id");
 
 categoryRouter.post("/", createCategory);

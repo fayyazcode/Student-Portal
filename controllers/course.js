@@ -1,7 +1,7 @@
 const { validateCreateCourse, validateUpdateCourse } = require("../joischemas/course");
 const Course = require("../models/courseModel")
 const CourseImage = require("../models/courseImageModel")
-const { resWrapper } = require("../utils");
+const { resWrapper, isValidUuid } = require("../utils");
 const { uploadMultipleToCloudinary } = require("../utils/cloudinary");
 const CourseCategory = require("../models/courseCategoryModel");
 const Enrollment = require("../models/enrollment");
@@ -55,6 +55,8 @@ const getAllCourses = async (req, res) => {
 
 const getACourse = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const course = await Course.findByPk(id, {
         ...includeObj
@@ -68,6 +70,8 @@ const getACourse = async (req, res) => {
 
 const deleteACourse = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const course = await Course.findByPk(id, {
         ...includeObj
@@ -81,6 +85,8 @@ const deleteACourse = async (req, res) => {
 
 const updateACourse = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const { error, value } = validateUpdateCourse(req.body)
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));
@@ -114,6 +120,8 @@ const updateACourse = async (req, res) => {
     }
 
     if (value.categoryId) {
+        if (!isValidUuid(value.categoryId, res)) return;
+
         const category = await CourseCategory.findByPk(value.categoryId);
         if (!category) return res.status(404).send(resWrapper("Category Dosn't Exist", 404, null, "Category Id Is Not Valid"));
 
@@ -129,6 +137,8 @@ const updateACourse = async (req, res) => {
 
 const getAllStudentsOfACourse = async (req, res) => {
     const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
 
     const course = await Course.findByPk(id);
     if (!course) return res.status(404).send(resWrapper("Course Not Found", 404, null, "Id Is Not Valid"))

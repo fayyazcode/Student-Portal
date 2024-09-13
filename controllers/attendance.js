@@ -1,5 +1,5 @@
 const { validateCreateAttendance, validateUpdateAttendance, validateUniqueStudentInQuater, validateYear } = require("../joischemas/attendance");
-const { resWrapper, getQuarterDates } = require("../utils");
+const { resWrapper, getQuarterDates, isValidUuid } = require("../utils");
 
 const Enrollment = require("../models/enrollment");
 const Attendance = require("../models/attendance")
@@ -35,6 +35,8 @@ const createAttendance = async (req, res) => {
     const { error, value: { enrollmentId, date, isPresent } } = validateCreateAttendance(req.body)
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));
 
+    if (!isValidUuid(enrollmentId, res)) return;
+
     const enrollment = await Enrollment.findByPk(enrollmentId);
     if (!enrollment) return res.status(404).send(resWrapper("Enrollment Not Found", 404, null, "Enrollment Id Is Not Valid"));
 
@@ -64,6 +66,9 @@ const getAllAttendance = async (req, res) => {
 const getAAttendance = async (req, res) => {
     const id = req.params.id;
 
+    if (!isValidUuid(id, res)) return;
+
+
     const attendance = await Attendance.findByPk(id, {
         ...includeObj
     });
@@ -74,6 +79,9 @@ const getAAttendance = async (req, res) => {
 
 const updateAttendance = async (req, res) => {
     const id = req.params.id;
+
+    if (!isValidUuid(id, res)) return;
+
 
     const { error, value } = validateUpdateAttendance(req.body);
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message))
@@ -89,6 +97,8 @@ const updateAttendance = async (req, res) => {
 
 const getAllAttendanceOfACourse = async (req, res) => {
     const courseId = req.params.courseId;
+    if (!isValidUuid(courseId, res)) return;
+
 
     const course = await Course.findByPk(courseId);
     if (!course) return res.status(404).send(resWrapper("Course Not Found", 404, null, "Course Id Is Not Valid"));
@@ -140,7 +150,11 @@ const getAllAttendanceOfAStudentWithCourse = async (req, res) => {
         }
     }
     const courseId = req.params.courseId;
+    if (!isValidUuid(courseId, res)) return;
+
     const studentId = req.params.studentId;
+    if (!isValidUuid(studentId, res)) return;
+
 
     const course = await Course.findByPk(courseId);
     if (!course) return res.status(404).send(resWrapper("Course Not Found", 404, null, "Course Id Is Not Valid"));
@@ -169,6 +183,9 @@ const getAllAttendanceOfAStudentWithCourse = async (req, res) => {
 
 const getAllAttendanceOfAStudent = async (req, res) => {
     const studentId = req.params.studentId;
+    if (!isValidUuid(studentId, res)) return;
+
+
 
     const student = await Student.findByPk(studentId);
     if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Student Id Is Not Valid"));

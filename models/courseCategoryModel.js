@@ -3,10 +3,9 @@ const { DataTypes } = require("sequelize")
 
 const CourseCategory = sequelize.define("CourseCategory", {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        allowNull: false,
-        autoIncrement: true,
+        defaultValue: DataTypes.UUIDV4
     },
     title: {
         type: DataTypes.STRING,

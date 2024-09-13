@@ -4,13 +4,12 @@ const Enrollment = require("./enrollment");
 
 const Attendance = sequelize.define("Attendance", {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4
     },
     enrollmentId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Enrollment,

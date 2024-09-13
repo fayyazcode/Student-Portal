@@ -5,13 +5,12 @@ const Course = require("./courseModel")
 
 const Enrollment = sequelize.define("Enrollment", {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4
     },
     studentId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Student,
@@ -20,7 +19,7 @@ const Enrollment = sequelize.define("Enrollment", {
         onDelete: "CASCADE",
     },
     courseId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Course,

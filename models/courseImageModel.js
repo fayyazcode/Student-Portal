@@ -4,17 +4,16 @@ const Course = require("./courseModel");
 
 const CourseImage = sequelize.define("CourseImage", {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        allowNull: false,
-        autoIncrement: true
+        defaultValue: DataTypes.UUIDV4
     },
     url: {
         type: DataTypes.STRING,
         allowNull: false
     },
     courseId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Course,

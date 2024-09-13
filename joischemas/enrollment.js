@@ -2,8 +2,8 @@ const Joi = require("joi")
 
 
 const createEnrollmentSchmea = Joi.object({
-    studentId: Joi.number().required(),
-    courseId: Joi.number().required(),
+    studentId: Joi.string().required(),
+    courseId: Joi.string().required(),
 });
 
 const validateCreateEnrollment = (body) => createEnrollmentSchmea.validate(body);
