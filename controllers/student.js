@@ -38,6 +38,23 @@ const calculateAge = (dob) => {
     return age;
 };
 
+// {
+//     firstName: firstName,
+//     middleName: middleName,
+//     lastName: lastName,
+//     gender: gender,
+//     dob: dob,
+//     zip: zipCode,
+//     phoneNumber: phoneNumber,
+//     email: email,
+//     // phoneNumber1,
+//     // doj,
+//     sourceOfIncome: income,
+//     "class": "--"
+//     // chartIncome,
+//     // note
+// }
+
 const createStudent = async (req, res) => {
     const { error, value } = validateCreateStudent(req.body)
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));

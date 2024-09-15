@@ -19,8 +19,8 @@ const Student = sequelize.define("Student", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    sourceOfIncome: {
-        type: DataTypes.STRING,
+    chartIncome: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     gender: {
@@ -35,12 +35,24 @@ const Student = sequelize.define("Student", {
         type: DataTypes.DATEONLY,
         allowNull: false
     },
+    doj: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
     age: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    phoneNumber: {
+    phoneNumber1: {
         type: DataTypes.STRING,
+        allowNull: false
+    },
+    phoneNumber2: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    note: {
+        type: DataTypes.TEXT,
         allowNull: false
     },
     email: {
