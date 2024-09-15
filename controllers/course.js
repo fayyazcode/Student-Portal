@@ -23,15 +23,11 @@ const createCourse = async (req, res) => {
     const categroy = await CourseCategory.findByPk(value.categoryId);
     if (!categroy) return res.status(404).send(resWrapper("Category Not Found", 404, null, "Category Id Is Not Valid"))
 
-    const response = await uploadMultipleToCloudinary(req.files, "course");
-    if (!response.isSuccess) return res.status(400).send(resWrapper("Image upload Error. Try again", 400, "Images can't be upload at the moment try again later"))
+    const { title, description, status, categoryId, images } = value;
+    const course = await Course.create({ title, description, status, categoryId });
 
-    if (response.data.length === 0) return res.status(400).send(resWrapper("Image upload Error. Try again", 400, "Images can't be upload at the moment try again later"));
-
-    const course = await Course.create({ ...value });
-
-    const courseImages = response.data.map(url => ({
-        url,
+    const courseImages = images.map(image => ({
+        url: image,
         courseId: course.id,
     }));
 
@@ -143,13 +139,9 @@ const updateACourse = async (req, res) => {
     }
 
     // To Add New Images
-    if (req.files && req.files.length) {
-        const response = await uploadMultipleToCloudinary(req.files, "course");
-        if (!response.isSuccess) return res.status(400).send(resWrapper("Image upload Error. Try again", 400, "Images can't be upload at the moment try again later"))
+    if (value.addImages && value.addImages.length) {
 
-        if (response.data.length === 0) return res.status(400).send(resWrapper("Image upload Error. Try again", 400, "Images can't be upload at the moment try again later"));
-
-        const courseImages = response.data.map(url => ({
+        const courseImages = value.addImages.map(url => ({
             url,
             courseId: course.id,
         }));
@@ -157,15 +149,17 @@ const updateACourse = async (req, res) => {
         await CourseImage.bulkCreate(courseImages);
     }
 
+
+    const { addImages, deletedImages, ...filteredObject } = value;;
     if (value.categoryId) {
         if (!isValidUuid(value.categoryId, res)) return;
 
         const category = await CourseCategory.findByPk(value.categoryId);
         if (!category) return res.status(404).send(resWrapper("Category Dosn't Exist", 404, null, "Category Id Is Not Valid"));
 
-        await course.update({ ...value })
+        await course.update({ ...filteredObject })
     } else {
-        await course.update({ ...value });
+        await course.update({ ...filteredObject });
     }
 
     const updatedCourse = await Course.findByPk(id, { ...includeObj })

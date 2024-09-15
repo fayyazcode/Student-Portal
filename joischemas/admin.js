@@ -5,6 +5,7 @@ const createAdminSchema = Joi.object({
     email: Joi.string().email().max(255).required(),
     password: Joi.string().min(8).max(255).required(),
     confirmPassword: Joi.string().required().valid(Joi.ref('password')),
+    image: Joi.string().required().max(500)
 });
 
 const validateCreateAdminSchema = (body) => createAdminSchema.validate(body);

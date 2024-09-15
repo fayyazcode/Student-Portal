@@ -14,7 +14,7 @@ const includeObj = {
 }
 
 const createAdmin = async (req, res) => {
-    const { error, value: { name, email, password } } = validateCreateAdminSchema(req.body)
+    const { error, value: { name, email, password, image } } = validateCreateAdminSchema(req.body)
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));
 
     const oldUser = await Admin.findOne({
@@ -24,13 +24,10 @@ const createAdmin = async (req, res) => {
     });
     if (oldUser) return res.status(400).send(resWrapper("User With Email ALready Exist", 400, null, "Email With User Already Exist"));
 
-    const { isSuccess, data, error: cloudError } = await uploadSingleToCloudinary(req.file, "admin")
-    if (!isSuccess) return res.status(400).send(resWrapper("Failed to upload image", 400, null, cloudError));
-
     const hashedPassword = await bcrypt.hash(password, 10);
     if (!hashedPassword) return res.status(400).send(resWrapper("Error While Saving. Trying Again", 400, null, "Please Try Again Later"))
 
-    const admin = await Admin.create({ name, email, password: hashedPassword, profilePic: data });
+    const admin = await Admin.create({ name, email, password: hashedPassword, profilePic: image });
 
     const temp = await Admin.findByPk(admin.id, {
         ...includeObj
