@@ -23,6 +23,14 @@ const Student = sequelize.define("Student", {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    income: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    rollNumber: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     gender: {
         type: DataTypes.ENUM("Male", "Female", "Other"),
         allowNull: false
