@@ -4,6 +4,10 @@ const Enrollment = require("../models/enrollment");
 
 const { validateCreateStudent } = require("../joischemas/student");
 const { Op, Sequelize } = require("sequelize");
+const Course = require("../models/courseModel");
+const CourseImage = require("../models/courseImageModel");
+const CourseCategory = require("../models/courseCategoryModel");
+
 
 const includeObj = {
     attributes: {
@@ -127,5 +131,37 @@ const deleteAStudent = async (req, res) => {
     return res.status(200).send(resWrapper("Student Deleted", 200, student));
 }
 
+const getAllCoursesOfAStudent = async (req, res) => {
+    const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
 
-module.exports = { createStudent, getAllStudents, getAStudent, deleteAStudent }
+    const student = await Student.findByPk(id);
+    if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Id Is Not Valid"))
+
+    const allCourses = await Enrollment.findAll({
+        where: {
+            studentId: id
+        },
+        include: [
+            { model: Student, as: "student" },
+            {
+                model: Course, as: "course", include: [
+                    {
+                        model: CourseImage, as: "images", attributes: {
+                            exclude: ["courseId"]
+                        }
+                    },
+                    {
+                        model: CourseCategory, as: "category"
+                    }
+                ]
+            }
+        ]
+    });
+
+    return res.status(200).send(resWrapper("All Courses of A Student", 200, allCourses))
+
+}
+
+
+module.exports = { createStudent, getAllStudents, getAStudent, deleteAStudent, getAllCoursesOfAStudent }
