@@ -2,7 +2,7 @@ const { resWrapper, isValidUuid } = require("../utils");
 const Student = require("../models/studentModel");
 const Enrollment = require("../models/enrollment");
 
-const { validateCreateStudent } = require("../joischemas/student");
+const { validateCreateStudent, validateUpdateStudent } = require("../joischemas/student");
 const { Op, Sequelize } = require("sequelize");
 const Course = require("../models/courseModel");
 const CourseImage = require("../models/courseImageModel");
@@ -119,6 +119,30 @@ const getAStudent = async (req, res) => {
     return res.status(200).send(resWrapper("Student Reterived", 200, student));
 }
 
+const updateAStudent = async (req, res) => {
+    const id = req.params.id;
+    if (!isValidUuid(id, res)) return;
+
+
+    const { error, value } = validateUpdateStudent(req.body)
+    if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));
+
+    const student = await Student.findByPk(id);
+    if (!student) return res.status(404).send(resWrapper("Student Not Found", 404, null, "Id Is Not Valid"))
+
+
+    if (value.dob) {
+        let age = calculateAge(value.dob);
+        await student.update({ ...value, age });
+
+    } else {
+        await student.update({ ...value });
+    }
+
+    return res.status(200).send(resWrapper("Student Updated", 200, student))
+
+}
+
 const deleteAStudent = async (req, res) => {
     const id = req.params.id;
     if (!isValidUuid(id, res)) return;
@@ -164,4 +188,4 @@ const getAllCoursesOfAStudent = async (req, res) => {
 }
 
 
-module.exports = { createStudent, getAllStudents, getAStudent, deleteAStudent, getAllCoursesOfAStudent }
+module.exports = { createStudent, getAllStudents, getAStudent, deleteAStudent, updateAStudent, getAllCoursesOfAStudent }
