@@ -55,7 +55,7 @@ const createAttendance = async (req, res) => {
         ...includeObj
     })
 
-    return res.status(201).send(resWrapper("Enrollment created", 201, temp));
+    return res.status(201).send(resWrapper("Attendance created", 201, temp));
 }
 
 const getAllAttendance = async (req, res) => {
