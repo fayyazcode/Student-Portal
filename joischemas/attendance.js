@@ -2,7 +2,8 @@ const Joi = require("joi")
 
 
 const createAttendanceSchema = Joi.object({
-    enrollmentId: Joi.string().required(),
+    studentId: Joi.string().required(),
+    courseId: Joi.string().required(),
     date: Joi.string()
         .isoDate().allow(null)
         .messages({

@@ -32,24 +32,31 @@ const includeObj = {
 }
 
 const createAttendance = async (req, res) => {
-    const { error, value: { enrollmentId, date, isPresent } } = validateCreateAttendance(req.body)
+    const { error, value: { studentId, courseId, date, isPresent } } = validateCreateAttendance(req.body)
     if (error) return res.status(400).send(resWrapper(error.message, 400, null, error.message));
 
-    if (!isValidUuid(enrollmentId, res)) return;
+    if (!isValidUuid(studentId, res)) return;
+    if (!isValidUuid(courseId, res)) return;
 
-    const enrollment = await Enrollment.findByPk(enrollmentId);
+
+    const enrollment = await Enrollment.findOne({
+        where: {
+            courseId,
+            studentId
+        }
+    });
     if (!enrollment) return res.status(404).send(resWrapper("Enrollment Not Found", 404, null, "Enrollment Id Is Not Valid"));
 
 
     const oldAttendace = await Attendance.findOne({
         where: {
-            enrollmentId: enrollmentId,
+            enrollmentId: enrollment.id,
             date: date
         }
     })
     if (oldAttendace) return res.status(400).send(resWrapper("Attendance Is Already Taken", 400, null, "Can't Take Alreay Taken Attendance"))
 
-    const attendance = await Attendance.create({ enrollmentId, date, isPresent });
+    const attendance = await Attendance.create({ enrollmentId: enrollment.id, date, isPresent });
 
     const temp = await Attendance.findByPk(attendance.id, {
         ...includeObj

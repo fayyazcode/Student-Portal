@@ -81,4 +81,23 @@ const deleteAEnrollment = async (req, res) => {
     return res.status(200).send(resWrapper("Enrollment Deleted", 200, enrollment));
 }
 
-module.exports = { createEnrollment, getAllEnrollments, getAEnrollment, deleteAEnrollment }
+const getAEnrollmentsOfAStudentOfCourse = async (req, res) => {
+    const studentId = req.params.studentId;
+    const courseId = req.params.courseId
+
+    if (!isValidUuid(studentId, res)) return;
+    if (!isValidUuid(courseId, res)) return;
+
+    const enrollment = await Enrollment.findOne({
+        where: {
+            studentId,
+            courseId
+        },
+        ...includeObj
+    });
+    if (!enrollment) return res.status(404).send(resWrapper("Enrollment Not Found", 404, null, "Id Is Not Valid"));
+
+    return res.status(200).send(resWrapper("Enrollment Reterived", 200, enrollment))
+}
+
+module.exports = { createEnrollment, getAllEnrollments, getAEnrollment, deleteAEnrollment, getAEnrollmentsOfAStudentOfCourse }
